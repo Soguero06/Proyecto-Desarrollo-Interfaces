@@ -1,9 +1,10 @@
+
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function index() {
   return (
     <View style={styles.container}>
-      <Text>Tab [Home|Settings]</Text>
+      <Text style={{fontFamily: 'Roboto'}}>Tab [Home|Settings]</Text>
     </View>
   );
 }

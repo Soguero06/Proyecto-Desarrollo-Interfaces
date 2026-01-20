@@ -12,9 +12,5 @@ export const globalStyles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
     },
-    Logo: {
-        width: 40,
-        height: 40,
-        marginRight: 10,
-    },
+    
 });

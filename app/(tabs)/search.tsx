@@ -71,8 +71,9 @@ const FlatListBasics = () => {
 
   const filterItem = ({ item }) => {
     return (
+      <View style={styles.card}>
       <Pressable onPress={() => router.navigate('/detalle')}>
-        <View style={styles.card}>
+        <View >
           <Image style={styles.Logo} source={{ uri: item.logo }} />
           <View>
             <Text style={styles.textoNombre}>{item.nombre}</Text>
@@ -82,6 +83,7 @@ const FlatListBasics = () => {
           </View>
         </View>
       </Pressable>
+      <View/>
     );
   };
 

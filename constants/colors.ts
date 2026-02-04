@@ -8,9 +8,10 @@ export const COLORS = {
   },
   dark: {
     background: "#1B262C", 
-    text: "#FFFFFF",
-    card: "#1F2937",
-    button: "#00B4D8",
-    icon: "#FFFFFF",
+    card: "#232F34",       
+    text: "#FFFFFF",      
+    primary: "#00B4D8",   
+    secondary: "#48CAE4", 
+    placeholder: "#8899A6"
   },
 };

@@ -1,12 +1,13 @@
 import { COLORS } from "@/constants/colors";
 import { TEAMS } from "@/constants/teams";
 import { useLocalSearchParams } from "expo-router";
+import React, { useContext } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
+import { ThemeContext } from "../ThemeContext";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.dark.background,
     alignItems: "center",
     paddingTop: 60,
     paddingHorizontal: 20,
@@ -17,7 +18,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   titulo: {
-    color: COLORS.dark.text,
     fontSize: 32,
     fontFamily: "Oswald",
     fontWeight: "bold",
@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   infoContainer: {
-    backgroundColor: COLORS.dark.card,
     paddingVertical: 20,
     paddingHorizontal: 40,
     borderRadius: 15,
@@ -40,38 +39,49 @@ const styles = StyleSheet.create({
   },
   dato: {
     fontSize: 20,
-    color: COLORS.dark.text,
     fontFamily: "Roboto",
     fontWeight: "500",
     marginBottom: 15,
   },
 });
 
-export default function equipo() {
+export default function EquipoScreen() {
   const { id } = useLocalSearchParams();
-  console.log("--- DEBUG ---");
-  console.log("ID que llega del buzón:", id);
-  console.log("Tipo del ID:", typeof id);
-  console.log("ID convertido a número:", Number(id));
-  console.log("----------------");
+  const { theme } = useContext(ThemeContext);
+  const activeColors = theme === "oscuro" ? COLORS.oscuro : COLORS.claro;
+
   const idNumero = Number(id);
   const equipoEncontrado = TEAMS.find((team) => team.id == idNumero);
+
   if (!equipoEncontrado) {
-    return <Text>No se ha encontrado el equipo</Text>;
+    return (
+      <Text style={{ color: activeColors.text }}>
+        No se ha encontrado el equipo
+      </Text>
+    );
   }
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: activeColors.background }]}
+    >
       <Image
         style={styles.imagen}
         source={{ uri: equipoEncontrado.logo }}
         resizeMode="contain"
       />
-      <Text style={styles.titulo}>{equipoEncontrado.nombre}</Text>
-      <View style={styles.infoContainer}>
+      <Text style={[styles.titulo, { color: activeColors.text }]}>
+        {equipoEncontrado.nombre}
+      </Text>
+      <View
+        style={[styles.infoContainer, { backgroundColor: activeColors.card }]}
+      >
         <Text style={styles.etiqueta}>Categoría</Text>
-        <Text style={styles.dato}>{equipoEncontrado.categoria}</Text>
+        <Text style={[styles.dato, { color: activeColors.text }]}>
+          {equipoEncontrado.categoria}
+        </Text>
         <Text style={styles.etiqueta}>División</Text>
-        <Text style={[styles.dato, { marginBottom: 0 }]}>
+        <Text style={[styles.dato, { color: activeColors.text }]}>
           {equipoEncontrado.division}
         </Text>
       </View>

@@ -1,6 +1,6 @@
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useContext } from "react";
 import {
   FlatList,
   Pressable,
@@ -9,40 +9,44 @@ import {
   StyleSheet,
   Text,
 } from "react-native";
+import { ThemeContext } from "../ThemeContext";
 
 const DATA = [
-  {
-    id: "1",
-    nombre: "Perfil y privacidad",
-  },
-  {
-    id: "2",
-    nombre: "Tema",
-  },
-  {
-    id: "3",
-    nombre: "Versión de la aplicación",
-  },
+  { id: "1", nombre: "Perfil y privacidad" },
+  { id: "2", nombre: "Tema" },
+  { id: "3", nombre: "Versión de la aplicación" },
 ];
 
-const Item = ({ nombre, onPress }: { nombre: string; onPress: () => void }) => (
-  <Pressable onPress={onPress} style={styles.item}>
-    <Text style={styles.title}>{nombre}</Text>
+const Item = ({ nombre, onPress, colors }: { nombre: string; onPress: () => void; colors: any }) => (
+  <Pressable 
+    onPress={onPress} 
+    style={[styles.item, { backgroundColor: colors.card }]}
+  >
+    <Text style={[styles.title, { color: colors.text }]}>{nombre}</Text>
   </Pressable>
 );
 
-export default function SettingsScreen() {
+export default function Settings() {
   const router = useRouter();
+  const { theme } = useContext(ThemeContext);
+  const activeColors = theme === "oscuro" ? COLORS.oscuro : COLORS.claro;
+
   const manejarClic = (titulo: string) => {
-    router.push("/tema");
+    if (titulo === "Tema") {
+      router.push("/tema");
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: activeColors.background }]}>
       <FlatList
         data={DATA}
         renderItem={({ item }) => (
-          <Item nombre={item.nombre} onPress={() => manejarClic(item.nombre)} />
+          <Item 
+            nombre={item.nombre} 
+            onPress={() => manejarClic(item.nombre)} 
+            colors={activeColors}
+          />
         )}
         keyExtractor={(item) => item.id}
       />
@@ -54,10 +58,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
-    backgroundColor: COLORS.light.background,
   },
   item: {
-    backgroundColor: COLORS.light.background,
     padding: 20,
     marginVertical: 1,
     marginHorizontal: 16,
@@ -65,7 +67,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    color: COLORS.light.text,
     fontFamily: "Roboto",
   },
 });

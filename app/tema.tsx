@@ -1,25 +1,29 @@
-import React, { useState } from "react";
+import { COLORS } from "@/constants/colors";
+import React, { useContext } from "react";
 import { StyleSheet, Switch, Text, View } from "react-native";
+import { ThemeContext } from "./ThemeContext";
 
-export default function TemaScreen() {
-  const [esOscuro, setEsOscuro] = useState(false);
+export default function Tema() {
+  const { theme, setTheme } = useContext(ThemeContext);
 
-  const cambiarSwitch = () => {
-    setEsOscuro((previousState) => !previousState);
-  };
+  const esOscuro = theme === "oscuro";
+
+  function cambiarTema() {
+    setTheme(esOscuro ? "claro" : "oscuro");
+  }
 
   return (
-    <View style={[styles.container, esOscuro ? styles.dark : styles.light]}>
-      <Text
-        style={[styles.text, esOscuro ? styles.textDark : styles.textLight]}
-      >
-        {esOscuro ? "Modo Oscuro" : "Modo Claro"}
+    <View
+      style={[styles.container, { backgroundColor: COLORS[theme].background }]}
+    >
+      <Text style={[styles.texto, { color: COLORS[theme].text }]}>
+        Modo actual: {theme}
       </Text>
 
       <Switch
         trackColor={{ false: "#767577", true: "#81b0ff" }}
         thumbColor={esOscuro ? "#f5dd4b" : "#f4f3f4"}
-        onValueChange={cambiarSwitch}
+        onValueChange={cambiarTema}
         value={esOscuro}
       />
     </View>
@@ -32,13 +36,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  text: {
-    fontSize: 20,
+  texto: {
+    fontSize: 24,
     marginBottom: 20,
     fontFamily: "Oswald",
   },
-  light: { backgroundColor: "#ffffff" },
-  dark: { backgroundColor: "#1B262C" },
-  textLight: { color: "#000" },
-  textDark: { color: "#fff" },
 });

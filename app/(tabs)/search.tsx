@@ -1,7 +1,7 @@
 import { COLORS } from "@/constants/colors";
 import { TEAMS } from "@/constants/teams";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   FlatList,
   Image,
@@ -11,27 +11,20 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { ThemeContext } from "../ThemeContext"; 
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // Usamos tu gris oscuro de fondo
-    backgroundColor: COLORS.dark.background,
     paddingTop: 50,
     paddingHorizontal: 15,
   },
   input: {
     height: 50,
     borderWidth: 2,
-    // El borde del buscador usa tu Azul Fuerte (Primary)
-    borderColor: COLORS.dark.primary,
     paddingLeft: 20,
     marginBottom: 25,
     borderRadius: 25,
-    // Fondo oscuro para el input también
-    backgroundColor: COLORS.dark.card,
-    // Texto blanco al escribir
-    color: COLORS.dark.text,
     fontSize: 16,
   },
   fila: {
@@ -39,25 +32,20 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   card: {
-    backgroundColor: COLORS.dark.card,
     borderRadius: 12,
     borderWidth: 1,
-
-    borderColor: COLORS.dark.secondary,
-
     elevation: 4,
     shadowColor: "#000",
     shadowOpacity: 0.3,
     shadowRadius: 3,
 
-    width: "24%",
+    width: "31%",
     height: 160,
     padding: 10,
     alignItems: "center",
     justifyContent: "center",
   },
   textoNombre: {
-    color: COLORS.dark.text,
     fontSize: 13,
     fontFamily: "Oswald",
     textAlign: "center",
@@ -65,7 +53,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   textoDetalle: {
-    color: COLORS.dark.secondary,
     fontSize: 10,
     fontFamily: "Roboto",
     textAlign: "center",
@@ -82,18 +69,31 @@ const styles = StyleSheet.create({
 export default function SearchScreen() {
   const [texto, setTexto] = useState("");
   const router = useRouter();
+  
+  const { theme } = useContext(ThemeContext);
+  const activeColors = theme === "oscuro" ? COLORS.oscuro : COLORS.claro;
+
   const lista = TEAMS.filter((equipo) =>
     equipo.nombre.toLowerCase().includes(texto.toLowerCase()),
   );
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: activeColors.background }]}
+    >
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          { 
+            borderColor: activeColors.primary,
+            backgroundColor: activeColors.card, 
+            color: activeColors.text 
+          },
+        ]}
         onChangeText={(t) => setTexto(t)}
         value={texto}
         placeholder="Buscar equipo"
-        placeholderTextColor={COLORS.dark.placeholder}
+        placeholderTextColor={activeColors.placeholder || "#999"}
       />
 
       <FlatList
@@ -101,7 +101,10 @@ export default function SearchScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <Pressable
-            style={styles.card}
+            style={[styles.card, { 
+                backgroundColor: activeColors.card, 
+                borderColor: activeColors.secondary 
+            }]}
             onPress={() => {
               router.push(("/equipo/" + item.id) as any);
             }}
@@ -112,16 +115,16 @@ export default function SearchScreen() {
               resizeMode="contain"
             />
             <View>
-              <Text style={styles.textoNombre} numberOfLines={1}>
+              <Text style={[styles.textoNombre, { color: activeColors.text }]} numberOfLines={1}>
                 {item.nombre}
               </Text>
-              <Text style={styles.textoDetalle}>
+              <Text style={[styles.textoDetalle, { color: activeColors.secondary }]}>
                 {item.division} - {item.categoria}
               </Text>
             </View>
           </Pressable>
         )}
-        numColumns={4}
+        numColumns={3}
         columnWrapperStyle={styles.fila}
       />
     </View>

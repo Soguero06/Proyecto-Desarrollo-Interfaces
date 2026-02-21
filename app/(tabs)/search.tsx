@@ -11,7 +11,8 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { ThemeContext } from "../ThemeContext"; 
+import { ThemeContext } from "../ThemeContext";
+import { filtrarEquipos } from "./utils/filtros";
 
 const styles = StyleSheet.create({
   container: {
@@ -69,13 +70,25 @@ const styles = StyleSheet.create({
 export default function SearchScreen() {
   const [texto, setTexto] = useState("");
   const router = useRouter();
-  
+
   const { theme } = useContext(ThemeContext);
   const activeColors = theme === "oscuro" ? COLORS.oscuro : COLORS.claro;
 
-  const lista = TEAMS.filter((equipo) =>
-    equipo.nombre.toLowerCase().includes(texto.toLowerCase()),
-  );
+  const generarItemsFicticios = (cantidad: number) => {
+    const base = [...TEAMS];
+    return Array.from({ length: cantidad }, (_, i) => ({
+      ...base[i % base.length],
+      id: i,
+      nombre: `${base[i % base.length].nombre} ${i + 1}`,
+    }));
+  };
+
+  const cantidadPrueba = 1000;
+  const datosVolumen = generarItemsFicticios(cantidadPrueba);
+
+  console.time(`Carga de ${cantidadPrueba} ítems`);
+  const lista = filtrarEquipos(datosVolumen, texto);
+  console.timeEnd(`Carga de ${cantidadPrueba} ítems`);
 
   return (
     <View
@@ -84,13 +97,13 @@ export default function SearchScreen() {
       <TextInput
         style={[
           styles.input,
-          { 
+          {
             borderColor: activeColors.primary,
-            backgroundColor: activeColors.card, 
-            color: activeColors.text 
+            backgroundColor: activeColors.card,
+            color: activeColors.text,
           },
         ]}
-        onChangeText={(t) => setTexto(t)}
+        onChangeText={setTexto}
         value={texto}
         placeholder="Buscar equipo"
         placeholderTextColor={activeColors.placeholder || "#999"}
@@ -101,10 +114,13 @@ export default function SearchScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <Pressable
-            style={[styles.card, { 
-                backgroundColor: activeColors.card, 
-                borderColor: activeColors.secondary 
-            }]}
+            style={[
+              styles.card,
+              {
+                backgroundColor: activeColors.card,
+                borderColor: activeColors.secondary,
+              },
+            ]}
             onPress={() => {
               router.push(("/equipo/" + item.id) as any);
             }}
@@ -115,10 +131,15 @@ export default function SearchScreen() {
               resizeMode="contain"
             />
             <View>
-              <Text style={[styles.textoNombre, { color: activeColors.text }]} numberOfLines={1}>
+              <Text
+                style={[styles.textoNombre, { color: activeColors.text }]}
+                numberOfLines={1}
+              >
                 {item.nombre}
               </Text>
-              <Text style={[styles.textoDetalle, { color: activeColors.secondary }]}>
+              <Text
+                style={[styles.textoDetalle, { color: activeColors.secondary }]}
+              >
                 {item.division} - {item.categoria}
               </Text>
             </View>
